@@ -24,13 +24,14 @@ var payload = function(){
     })
     polling_timers = {}
 
-    window.document.body.innerHTML = ''
+    document.head.innerHTML = '<style>body{background-color: #f0f0f0; font-family: Helvetica,Arial,sans-serif; font-size: 16px;} h3{color: #333;} ul li{line-height: 1.5em;} a{color: rgb(17, 85, 204); text-decoration: none;}</style>'
+    document.body.innerHTML = ''
   }
 
   display_links = function(links, $target) {
     // links = [{title, url}]
 
-    $target = $target || $(window.document.body).css('margin', '20px')
+    $target = $target || $(document.body).css('margin', '20px')
 
     var $ul = $('<ul></ul>').appendTo($target)
     links.forEach(({title, url}) => {
@@ -61,7 +62,7 @@ var payload = function(){
 </div>`
     )
     .css('margin', '20px')
-    .appendTo(window.document.body)
+    .appendTo(document.body)
 
     var $videos, $direct, $webcast
     $videos  = $contents.find('div#videos').css('height', '1px').css('overflow', 'hidden')
@@ -213,11 +214,9 @@ if (document.readyState === 'complete'){
   inject_function(payload)
 }
 else {
-  document.onreadystatechange = function(){
-    if (document.readyState === 'complete'){
-      inject_function(payload)
-    }
-  }
+  document.addEventListener("DOMContentLoaded", function(event) {
+    inject_function(payload)
+  })
 }
 
 var inject_next_tic = function() {
@@ -226,38 +225,46 @@ var inject_next_tic = function() {
   }
   else {
     inject_function(function(){
-      var handoff_videos = function(videos) {
-        if (typeof window.display_videos !== 'function') {
-          setTimeout(() => handoff_videos(videos), 10)
+      var update_global_function = function() {
+        if (typeof window.checkIfCanPlay !== 'function') {
+          setTimeout(update_global_function, 10)
         }
         else {
-          window.initialize_page_content()
-          window.display_videos(videos)
+          window.checkIfCanPlay = function(url, json) {
+            var videos = []
+
+            var handoff_videos = function(videos) {
+              if (typeof window.display_videos !== 'function') {
+                setTimeout(() => handoff_videos(videos), 10)
+              }
+              else {
+                window.initialize_page_content()
+                window.display_videos(videos)
+              }
+            }
+
+            if (json && (!url || url.length < 3)) {
+              try {
+                json = JSON.parse(json)
+
+                jQuery.each(json, function(title, url){
+                  videos.push({title, url})
+                })
+              }
+              catch(e){
+                url = json
+              }
+            }
+            if (url && url.length >= 3) {
+              videos.push({title: 'Stream #1', url})
+            }
+            if (videos.length) {
+              handoff_videos(videos)
+            }
+          }
         }
       }
-
-      window.checkIfCanPlay = function(url, json) {
-        var videos = []
-
-        if (json && (!url || url.length < 3)) {
-          try {
-            json = JSON.parse(json)
-
-            jQuery.each(json, function(title, url){
-              videos.push({title, url})
-            })
-          }
-          catch(e){
-            url = json
-          }
-        }
-        if (url && url.length >= 3) {
-          videos.push({title: 'Stream #1', url})
-        }
-        if (videos.length) {
-          handoff_videos(videos)
-        }
-      }
+      update_global_function()
     })
   }
 }

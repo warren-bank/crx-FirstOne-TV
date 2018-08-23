@@ -124,7 +124,7 @@ var payload = function(){
         var title
 
         window.checkIfCanPlay = function(url) {
-          videos.push({title, url})
+          if (url) videos.push({title, url})
         }
 
         $(selector).each((i, el) => {
@@ -166,8 +166,9 @@ var payload = function(){
         let $img    = $item.find('img[alt]')
         let $a      = $item.find('a[href]')
         let channel = $img.attr('alt')
-        let url     = 'https://www.firstonetv.net' + $a.attr('href')
-        if (url !== 'https://www.firstonetv.net/Register-Login') {
+        let url     = $a.attr('href')
+        if (url && url !== '/Register-Login') {
+          url = 'https://www.firstonetv.net' + url
           links.push({title: channel, url})
         }
       })
@@ -248,7 +249,7 @@ var inject_next_tic = function() {
                 json = JSON.parse(json)
 
                 jQuery.each(json, function(title, url){
-                  videos.push({title, url})
+                  if (url) videos.push({title, url})
                 })
               }
               catch(e){

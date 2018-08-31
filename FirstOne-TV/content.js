@@ -24,24 +24,30 @@ var payload = function(){
     })
     polling_timers = {}
 
-    document.head.innerHTML = '<style>body{background-color: #f0f0f0; font-family: Helvetica,Arial,sans-serif; font-size: 16px;} h3{color: #333;} ul li{line-height: 1.5em;} a{color: rgb(17, 85, 204); text-decoration: none;}</style>'
+    document.head.innerHTML = '<style>body{background-color: #f0f0f0; font-family: Helvetica,Arial,sans-serif; font-size: 16px; color: #666;} ul li{line-height: 1.5em;} ul li > div{margin-left: 1.25em;} a{color: rgb(17, 85, 204); text-decoration: none;}</style>'
     document.body.innerHTML = ''
   }
 
   display_links = function(links, $target) {
-    // links = [{title, url}]
+    // links = [{title, subtitle, url}]
 
     $target = $target || $(document.body).css('margin', '20px')
 
     var $ul = $('<ul></ul>').appendTo($target)
-    links.forEach(({title, url}) => {
-      let $li, $a
+    links.forEach(({title, subtitle, url}) => {
+      let $li, $a, $div
       $li = $('<li></li>')
         .appendTo($ul)
       $a = $('<a></a>')
         .text(title)
         .attr('href', url)
         .appendTo($li)
+
+      if (subtitle) {
+        $div = $('<div></div>')
+          .text(subtitle)
+          .appendTo($li)
+      }
     })
   }
 
@@ -165,11 +171,12 @@ var payload = function(){
         let $item   = $(item)
         let $img    = $item.find('img[alt]')
         let $a      = $item.find('a[href]')
-        let channel = $img.attr('alt')
-        let url     = $a.attr('href')
-        if (url && url !== '/Register-Login') {
+        let channel = $img.first().attr('alt')
+        let program = ($img.length > 1) ? $img.eq(1).attr('alt') : ''
+        let url     = $a.first().attr('href')
+        if (channel && url && (url !== '/Register-Login')) {
           url = 'https://www.firstonetv.net' + url
-          links.push({title: channel, url})
+          links.push({title: channel, subtitle: program, url})
         }
       })
 

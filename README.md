@@ -3,7 +3,7 @@
 #### Summary:
 
 Chromium browser extension:
-* works on pages that are hosted at: [`www.firstonetv.net/Live*`](https://www.firstonetv.net/Live)
+* works on pages that are hosted at: [`www.firstonetv.live/Live*`](https://www.firstonetv.live/Live)
 * on pages that list information (ie: countries, channels, stream options)
   * replace the page contents with a simplified list of links
   * dramatically reduces CPU load

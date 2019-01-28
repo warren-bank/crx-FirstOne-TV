@@ -175,7 +175,7 @@ var payload = function(){
         let program = ($img.length > 1) ? $img.eq(1).attr('alt') : ''
         let url     = $a.first().attr('href')
         if (channel && url && (url !== '/Register-Login')) {
-          url = 'https://www.firstonetv.net' + url
+          url = 'https://www.firstonetv.live' + url
           links.push({title: channel, subtitle: program, url})
         }
       })
